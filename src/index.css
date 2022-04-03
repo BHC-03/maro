@@ -1,13 +1,157 @@
-body {
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  scroll-behavior: smooth;
+}
+.errorMessage {
+  font-size: 1rem;
+  color: rgb(233, 83, 83);
+  margin-left: 1rem;
+}
+.inputfield {
+  padding: 1.2rem;
+  font-size: 1.3rem;
+  margin: 1rem;
+  outline-color: blue;
+}
+.button {
+  margin-left: 1rem;
+  padding: 1rem;
+  font-size: 1rem;
+  width: 18.5rem;
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all ease-in-out 0.2s;
+  font-weight: bold;
+}
+.button:hover {
+  background-color: rgb(77, 77, 241);
+  color: white;
+}
+.inputContainer {
+  border: 3px blue solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 350px;
+  border-radius: 10px;
+  padding-bottom: 2rem;
+  position: absolute;
+  left: 120px;
+  top: 120px;
+  box-shadow: 1px 1px 4px rgb(134, 128, 128);
+}
+.inputText {
+  resize: none;
+  width: 100%;
+  font-size: 1.2rem;
+  font-weight: 300;
+  padding: 15px 10px;
+  height: 70%;
+}
+.mainPageContainer {
+  width: 80%;
+  margin: auto;
+  min-height: 100vh;
+  background-color: rgba(178, 226, 226, 0.288);
+}
+.postInput {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 220px;
+  background-color: rgb(175, 224, 224);
+  width: 50%;
+  align-self: center;
+  transform: translateX(50%);
+}
+.submitButton {
+  border-radius: 14px;
+  width: 20%;
+  padding: 5px 3px;
+  font-size: 1.2rem;
+  transform: translateX(200%);
+  cursor: pointer;
+  transition: all 0.17s ease-in-out;
+}
+.submitButton:hover {
+  background-color: rgba(127, 255, 212, 0.116);
+}
+.postContainer {
+  height: 300px;
+  width: 50%;
+  display: flex;
+  transform: translateX(50%);
+  /* align-items: center; */
+  background-color: rgb(175, 224, 224);
+  margin: 10px 0px;
+  border-radius: 14px;
+}
+.profilePic {
+  width: 100%;
+  height: 17%;
+  border-radius: 50%;
+  background-color: black;
+  display: grid;
+  align-content: center;
+  color: white;
+}
+.postInfo {
+  width: 10%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  align-items: center;
+  padding: 5px;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+.votes {
+  height: 120px;
+  width: 50px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.upVote {
+  transform: rotate(180deg);
+}
+.vote {
+  color: black;
+  font-size: 2rem;
+  cursor: pointer;
+}
+.voteDiff {
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+.postText {
+  font-family: sans-serif;
+  font-weight: 200;
+  font-size: 1.4rem;
+  padding: 5px 8px;
+  width: 120%;
+}
+@keyframes ghostAnimation {
+  0% {
+    background-color: rgb(175, 224, 224);
+  }
+  50% {
+    background-color: rgb(194, 235, 235);
+  }
+}
+.ghostPost {
+  animation: ghostAnimation infinite 1.2s alternate-reverse linear;
+}
+.owenerId {
+  transform: translateX(40%);
 }
