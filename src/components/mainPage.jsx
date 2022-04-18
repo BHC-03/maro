@@ -1,14 +1,18 @@
 import React,{Suspense,useState} from "react";
 import { Redirect } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { isLogged } from "../RecoilStuff";
+import { isLogged,popUpActiveAtom } from "../RecoilStuff";
 import ScrollObserver from "../useBottomScrollFetch";
 import PostsContainer from "./postsContainerComponent";
 import GhostPosts from "./GhostlyPosts";
 import fire from "../fireconfig";
+import useHasValue from "../useHasValue";
+import PopUp from "./popUp";
 const MainPage=()=>{
+    const popUpActive = useRecoilValue(popUpActiveAtom);
     const [texti,setText] = useState('');
     const IsLogged = useRecoilValue(isLogged);
+    const hasValue = useHasValue();
     if(!IsLogged){
         return <Redirect push to={'/login/'}/>
     }
@@ -31,8 +35,11 @@ const MainPage=()=>{
         setText(e.target.value)
     }
     return(<>
-        <ScrollObserver />
-        <div className="mainPageContainer">
+        
+        {hasValue && <ScrollObserver />}
+                
+        
+        <div className={`mainPageContainer ${popUpActive?'mainPageDisable':'mainPageEnable'}`}>
             <div className="postInput">
                 <textarea onChange={textHandler} value={texti} className="inputText"  placeholder="What are your thoughts today ?" cols="30" rows="10"></textarea>
                 <button onClick={postHandler} className="submitButton"> Post </button>
@@ -42,8 +49,10 @@ const MainPage=()=>{
             <div className="logOutButton">
                 
             </div>
+            {//Todo:mainPagePopConatiner
+            }
         </div>
-        
+        <PopUp />
         </>
     )
 }

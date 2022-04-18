@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from "react";
 import Post from "./Post";
 import {useRecoilValue } from "recoil";
-import {actualPostsSelector} from "../RecoilStuff";
+import {actualPostsSelector } from "../RecoilStuff";
 const PostsContainer = ()=>{
     const actualPosts = useRecoilValue(actualPostsSelector);
     

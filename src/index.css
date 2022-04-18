@@ -59,6 +59,7 @@ body {
   margin: auto;
   min-height: 100vh;
   background-color: rgba(178, 226, 226, 0.288);
+  transition: filter 0.3s ease-out;
 }
 .postInput {
   display: flex;
@@ -92,6 +93,11 @@ body {
   background-color: rgb(175, 224, 224);
   margin: 10px 0px;
   border-radius: 14px;
+  border: rgb(255, 244, 244) 1.2px solid;
+}
+.postContainer:hover{
+  border: black 1.2px solid;
+  cursor: pointer;
 }
 .profilePic {
   width: 100%;
@@ -154,4 +160,152 @@ body {
 }
 .owenerId {
   transform: translateX(40%);
+}
+.upVote.active{
+  color:red;
+}
+.downVote.active{
+  color:rgb(129, 129, 238)
+}
+.voteDiff.active{
+  color: red;
+}
+.voteDiff.downActive{
+  color:rgb(129, 129, 238)  
+}
+.commentsButton{
+  margin-top: 50px;
+  font-size: 1.3rem;
+  padding: 6px;
+}
+.commentsButton:hover{
+  background-color: rgba(128, 128, 128, 0.432);
+}
+.PopUpContainer{
+  position: fixed;
+  height: 80%;
+  width: 40%;
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%,-55%);
+  background-color: rgb(101, 192, 228);
+  border-top-left-radius: 13px;
+  border-bottom-left-radius: 13px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+
+  overflow-y: scroll;
+}
+.PopUpContainer::-webkit-scrollbar{
+  width: 7px;
+}
+.PopUpContainer::-webkit-scrollbar-track{
+  background-color: rgb(181, 206, 240);
+  border-top-right-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+.PopUpContainer::-webkit-scrollbar-thumb{
+  background-color: rgb(128, 181, 250);
+  border-top-right-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+.PopUpContainer::-webkit-scrollbar-thumb:hover{
+  background-color: rgb(98, 166, 255);
+}
+.PopUpContainer::-webkit-scrollbar-thumb:active{
+  background-color: rgb(59, 140, 247);
+}
+.popUpPost{
+  min-height: 500px;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  display: flex;
+  border-bottom: 1px solid black;
+}
+.popUpPostDetails{
+  width: 8%;
+  padding: 7px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top-left-radius: 13px;
+}
+.popUpPic{
+  height: 55px;
+  width: 45px;
+}
+.popUpPostInfo{
+  flex: 1;
+  padding: 5px 9px;
+  font-size: 1.5rem;
+  margin-top: 100px;
+}
+.commentsContainer{
+  width: 100%;
+  height: auto;
+
+  min-height: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+.comment{
+  min-height: 170px;
+  width: 90%;
+  background-color: rgba(255, 0, 0, 0.411);
+  border-radius: 13px;
+  margin: 10px 0px;
+  border: solid rgb(99, 95, 95) 1px;
+  display: flex;
+}
+.closeButton{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.2rem;
+  color: grey;
+  cursor: pointer;
+}
+.closeButton:hover{
+  color: black;
+}
+.popUpDisable{
+  display: none;
+}
+.popUpEnable{
+  display: flex;
+  flex-direction: column;
+}
+.mainPageDisable{
+  pointer-events: none;
+  filter: blur(4.5px);
+  height: 100vh;
+  overflow: hidden;
+}
+.commentDetails{
+  display: flex;
+  flex-direction: column;
+  width: 8%;
+  align-items: center;
+  background-color: white;
+  border-top-left-radius: 13px;
+  border-bottom-left-radius: 13px;
+}
+.commentpic{
+  width:50px;
+  height: 50px;
+}
+.commentVote{
+  font-size: 1.6rem;
+}
+.commentVotes{
+  padding: 10px;
+  margin-top: 10px;
+}
+.commentText{
+  padding: 20px;
+  font-size: 1.3rem;
+  font-weight: bold;
 }

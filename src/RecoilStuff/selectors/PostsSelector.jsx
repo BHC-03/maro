@@ -8,9 +8,9 @@ const posts = selector({
     get: async ({ get }) => {
         const postsnumbers = get(postNumber);
         const postsArray = [];
-        const ref = await fire.firestore().collection('posts').orderBy('id').limit(10).startAt(postsnumbers).get();
+        const ref = await fire.firestore().collection('posts').orderBy('id').limit(10).startAt(postsnumbers+1).get();
         if (ref.empty) {
-            const newRef = await fire.firestore().collection('posts').orderBy('id').startAt(number.value).get();
+            const newRef = await fire.firestore().collection('posts').orderBy('id').startAt(number.value+1).get();
             if (newRef.empty) {
                 return null
             }
@@ -21,7 +21,6 @@ const posts = selector({
             return postsArray;
         }
         ref.forEach(post => {
-            console.log(post)
             postsArray.push(post.data());
             number.value++;
         })
