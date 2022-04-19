@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState,useRecoilState } from "recoil";
 import { popUpActiveAtom , activePostAtom } from "../RecoilStuff";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown,faMessage } from "@fortawesome/free-solid-svg-icons"; 
@@ -8,10 +8,9 @@ import { useRecoilValue } from "recoil";
 import { signedInfo } from "../RecoilStuff";
 const Post  =  ({post})=>{
     const setPopActive = useSetRecoilState(popUpActiveAtom);
-    const setActivePost = useSetRecoilState(activePostAtom);
-    const [postState,setPostState] = useState('none');
+    const [activePost,setActivePost] = useRecoilState(activePostAtom);
+    const [postState,setPostState] = useState({voteNum:0,state:'none'});
     const signedUser = useRecoilValue(signedInfo);
-    const voteNum = post.upvotes.length- post.downvotes.length;
     async function getPost(){
         const postRef = await fire.firestore().collection('posts').where('id','==',post.id).get();
         return postRef
@@ -21,38 +20,44 @@ const Post  =  ({post})=>{
             data=>{
                 const postRef = data;
                 const upvoted = postRef.docs[0].data().upvotes.find(id=> id === signedUser.id);
+                setPostState(oldState=>({...oldState,voteNum:post.upvotes.length - post.downvotes.length}));
                 if(upvoted){
-                    return setPostState('upVoted')
+                    return setPostState(oldState=>({...oldState,state:'upVoted'}))
                 }
                 const downvoted = postRef.docs[0].data().downvotes.find(id=> id===signedUser.id);
                 if(downvoted){
-                     return setPostState('downVoted');
+                     return setPostState(oldState=>({...oldState,state:'downVoted'}));
                  }
             }
         )
          
     },[])
+    useEffect(()=>{
+        if(post.id === activePost.post?.id){
+            setPostState(activePost.state);
+        }
+    },[activePost])
     const upVoteHandler =  async () => {
         const postRef = await getPost();
         const postInfo = postRef.docs[0].data();
         const newRef = await fire.firestore().collection('posts').doc(`${post.id}`);
         
-        switch(postState){
+        switch(postState.state){
             case'upVoted':
                 const filtered = postInfo.upvotes.filter(id=> id !== signedUser.id);
                 await newRef.update({upvotes:filtered});
-                setPostState('none');
+                setPostState(oldState=>({state:'none',voteNum:oldState.voteNum-1}));
                 break
             case'downVoted':
                 const filteredDownVotes = postInfo.downvotes.filter(id=> id!== signedUser.id);
                 const addedUpvotes = [...postInfo.upvotes,signedUser.id]
                 await newRef.update({downvotes:filteredDownVotes,upvotes:addedUpvotes});
-                setPostState('upVoted')
+                setPostState(oldState=>({state:'upVoted',voteNum:oldState.voteNum+2}))
                 break
             case'none':
                 const addedUpvotes1 = [...postInfo.upvotes,signedUser.id]
                 await newRef.update({upvotes:addedUpvotes1});
-                setPostState('upVoted')
+                setPostState(oldState=>({state:'upVoted',voteNum:oldState.voteNum+1}))
                 break
             default:
                 console.log('nothing happend')
@@ -63,22 +68,22 @@ const Post  =  ({post})=>{
         const postRef = await getPost();
         const postInfo = postRef.docs[0].data();
         const newRef = await fire.firestore().collection('posts').doc(`${post.id}`);
-        switch(postState){
+        switch(postState.state){
             case'upVoted':
                 const filteredUpVotes = postInfo.upvotes.filter(id=> id !== signedUser.id);
                 const addedDownVote = [...postInfo.downvotes,signedUser.id]
                 await newRef.update({upvotes:filteredUpVotes,downvotes:addedDownVote});
-                setPostState('downVoted');
+                setPostState(oldState=>({state:'downVoted',voteNum:oldState.voteNum-2}));
                 break
             case'downVoted':
                 const filteredDownVotes = postInfo.downvotes.filter(id=> id !== signedUser.id);
                 await newRef.update({downvotes:filteredDownVotes});
-                setPostState('none')
+                setPostState(oldState=>({state:'none',voteNum:oldState.voteNum+1}))
                 break
             case'none':
                 const AddedDownVote = [...postInfo.downvotes,signedUser.id];
                 await newRef.update({downvotes:AddedDownVote});
-                setPostState('downVoted');
+                setPostState(oldState=>({state:'downVoted',voteNum:oldState.voteNum-1}));
                 break
             default:
                 console.log('nothing happend')
@@ -86,20 +91,20 @@ const Post  =  ({post})=>{
     }
     const postClickHandler = ()=>{
         setPopActive(oldPopUp=>(!oldPopUp));
-        setActivePost(post)
+        setActivePost({post:post,state:postState})
     }
     return(
-        <div onClick={postClickHandler} className="postContainer">
+        <div  className="postContainer">
             <div className="postInfo">
                 <div className="profilePic">
                     <span className="owenerId">{post.owner}</span>
                 </div>
                 <div className="votes">
-                    <FontAwesomeIcon  onClick={upVoteHandler} icon={faArrowDown} className={`upVote vote ${postState==='upVoted'?'active':''}`} />
-                    <p className={`voteDiff ${postState === 'upVoted' ? 'active':postState === 'downVoted' ?'downActive':''}`}>{postState==='upVoted'?voteNum+1:postState==='downVoted'?voteNum-1:voteNum}</p>
-                    <FontAwesomeIcon onClick={downVoteHandler} icon={faArrowDown} className={`${postState==='downVoted'?'active':''} downVote vote`} />
+                    <FontAwesomeIcon  onClick={upVoteHandler} icon={faArrowDown} className={`upVote vote ${postState.state==='upVoted'?'active':''}`} />
+                    <p className={`voteDiff ${postState.state === 'upVoted' ? 'active':postState.state === 'downVoted' ?'downActive':''}`}>{postState.voteNum}</p>
+                    <FontAwesomeIcon onClick={downVoteHandler} icon={faArrowDown} className={`${postState.state==='downVoted'?'active':''} downVote vote`} />
                 </div>
-                <div className="commentsButton">
+                <div onClick={postClickHandler} className="commentsButton">
                     <FontAwesomeIcon icon={faMessage} className={'commentIcon'} />
                 </div>
             </div>

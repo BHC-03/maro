@@ -6,8 +6,8 @@ const ActivePostCommentsSelector = selector({
     get:async ({get})=>{
         const activePost = get(activePostAtom);
         const commentarray =[]  
-        if(activePost.id){
-            const commentsRef = await fire.firestore().collection('comments').where('post','==',activePost.id).get();
+        if(activePost.post?.id){
+            const commentsRef = await fire.firestore().collection('comments').where('post','==',activePost.post.id).get();
             commentsRef.forEach(comment=>{
             commentarray.push(comment.data());
         })
