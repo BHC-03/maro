@@ -16,7 +16,7 @@ const ScrollObserver = ()=>{
         window.addEventListener('scroll',scrollingFuv)
     },[])
     useEffect(()=>{
-        if(atBottom){
+        if(atBottom){ 
             setPostNumber(oldpst=>(oldpst+10));
         }
     },[atBottom])

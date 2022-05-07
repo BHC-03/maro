@@ -1,4 +1,4 @@
-import React , {useState} from "react";
+import React , {useState,useEffect,createRef,useLayoutEffect} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown , faXmark} from "@fortawesome/free-solid-svg-icons";
 import Comment from "./comment";
@@ -10,6 +10,25 @@ const PopUp = ()=>{
     const [activePost,setActivePost] = useRecoilState(activePostAtom);
     const comments = useRecoilValue(actualComments);
     const activeUser = useRecoilValue(signedInfo);
+    const postRef = createRef();
+    const [overflowing,setOverflowing] = useState(false);
+    const [text,setText] = useState('')
+    const [owner,setOwner] = useState();
+    let style;
+    useEffect(()=>{
+        if(activePost.post){
+            getowner()
+            
+        }
+    },[activePost])
+    useLayoutEffect(()=>{
+        if(postRef.current?.clientHeight > 500){
+            setOverflowing(true)
+            console.log('overflowing')
+        }else{
+            setOverflowing(false)
+        }
+    },[postRef])
     
     const upVoteHandler =  async () => {
         const postRef = await fire.firestore().collection('posts').where('id','==',activePost.post.id).get();
@@ -38,7 +57,41 @@ const PopUp = ()=>{
         }
 
     }
-    
+    const getowner = ()=>{
+        fire.firestore().collection('users').where('id','==',activePost.post.owner).get().then(data=>{
+            setOwner(data.docs[0].data())
+        })
+    }
+    const textHandler = (e)=>{
+        setText(e.target.value)
+    }
+    const postCommentHandler =async ()=>{
+        if(!!text){
+            const postRef = await fire.firestore().collection('posts').doc(`${activePost.post.id}`)
+            const oldCommentRef = await fire.firestore().collection('comments').get();
+            const id = oldCommentRef.size+1
+            const newComment = {
+                time: new Date().getTime(),
+                owner:activeUser.id,
+                post:activePost.post.id,
+                downvotes:[],
+                upvotes:[],
+                text:text,
+                id,
+            }
+            await fire.firestore().collection('comments').doc(`${id}`).set(newComment)
+            if(activePost.post.comments){
+                await postRef.update({comments:[...activePost.post.comments,id]});
+            }else{
+                await postRef.update({comments:[id]});
+            }
+            
+            setActivePost(oldActive=>({...oldActive}));
+            setText('');
+        }else{
+            return
+        }
+    }
     const downVoteHandler = async ()=>{
         const postRef = await fire.firestore().collection('posts').where('id','==',activePost.post.id).get();
         const postInfo =  postRef.docs[0].data();
@@ -75,10 +128,14 @@ const PopUp = ()=>{
             <span onClick={closeHandler} className="closeButton">
                 <FontAwesomeIcon icon={faXmark} />
             </span>
-            <div className="popUpPost">
+            <div className="popUpPost" >
                 <div className="popUpPostDetails">
                     <div className="profilePic popUpPic">
-                        <span className="owenerId">{activePost.post.owner}</span>
+                    <span className="ownerPic">
+                        {
+                            owner?<img className="actualOwnerPic" src={owner.img} />:activePost.post.owner
+                        }
+                    </span>
                     </div>
                     <div className="votes">
                     <FontAwesomeIcon onClick={upVoteHandler} icon={faArrowDown} className={`upVote vote ${activePost.state.state === 'upVoted'?'active':''} `} />
@@ -86,11 +143,19 @@ const PopUp = ()=>{
                     <FontAwesomeIcon onClick={downVoteHandler} icon={faArrowDown} className={` downVote vote ${activePost.state.state === 'downVoted'?'active':''}`} />
                     </div>
                 </div>
-                <div className="popUpPostInfo">
+                <div ref={postRef} className="popUpPostInfo">
                     {activePost.post.text}
+                    <div className="commentInputContainer">
+                    <textarea onChange={textHandler} value={text} placeholder="what are your thoughts on this" className="commentInput" rows={10} cols={10}></textarea>
+                    <span onClick={postCommentHandler} className="postComment">Post</span>
+                    </div>
+                    
                 </div>
+                
+                
             </div>
             <div className="commentsContainer">
+                
                 {
                     comments && comments.map(comment=>{
                         return <Comment key={comment.id} comment={comment} />
@@ -101,7 +166,7 @@ const PopUp = ()=>{
     )
 }
 return(
-    <div>FUvk</div>
+    <></>
 )
 }
 

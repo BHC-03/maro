@@ -2,7 +2,7 @@ import React,{useEffect,useState} from "react";
 import Post from "./Post";
 import {useRecoilValue } from "recoil";
 import {actualPostsSelector } from "../RecoilStuff";
-const PostsContainer = ()=>{
+const PostsContainer = ({setDone})=>{
     const actualPosts = useRecoilValue(actualPostsSelector);
     
 
@@ -10,6 +10,9 @@ const PostsContainer = ()=>{
     const [localPosts,setLocalPosts] = useState([]);
     
     useEffect(()=>{
+        if(actualPosts === 'done'){
+            return setDone(true);
+        }
         if(actualPosts){
             setLocalPosts(oldPosts=>{
                 return [...oldPosts,...actualPosts]

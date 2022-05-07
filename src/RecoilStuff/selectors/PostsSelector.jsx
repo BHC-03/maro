@@ -12,7 +12,7 @@ const posts = selector({
         if (ref.empty) {
             const newRef = await fire.firestore().collection('posts').orderBy('id').startAt(number.value+1).get();
             if (newRef.empty) {
-                return null
+                return 'done'
             }
             newRef.forEach(post => {
                 postsArray.push(post.data());

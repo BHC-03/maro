@@ -6,7 +6,13 @@ const ActualComments = selector({
     get:({get})=>{
         const comments = get(noWait(activePostCommentsSelector));
         if(comments.state === 'hasValue'){
-            return comments.contents
+            const sorted =  comments.contents.map(comment=> comment);
+            if(!!comments.contents[0]){
+                sorted.sort((a,b)=>{
+                    return ((b.upvotes.length - b.downvotes.length)-(a.upvotes.length - a.downvotes.length) )
+                })
+            }
+            return sorted
         }
         if(comments.state === 'loading'){
             return null
