@@ -10,11 +10,14 @@ const Post  =  ({post})=>{
     const setPopActive = useSetRecoilState(popUpActiveAtom);
     const [activePost,setActivePost] = useRecoilState(activePostAtom);
     const [postState,setPostState] = useState({voteNum:0,state:'none'});
+    const [authrized,setauthrized] = useState(false)
     const [overflowing,setOverflowing] = useState(false);
     const [owner,setOwner] = useState();
     const postTextref = createRef();
     const signedUser = useRecoilValue(signedInfo);
+    const [edit,setEdit] = useState(false);
     const [date,setDate] = useState();
+    const [deleted,setDeleted] = useState(false);
     async function getPost(){
         const postRef = await fire.firestore().collection('posts').where('id','==',post.id).get();
         return postRef
@@ -42,7 +45,11 @@ const Post  =  ({post})=>{
                  
             }
         )
-        
+        if(signedUser.id === post.owner){
+            setauthrized(true);
+        }else{
+            setauthrized(false);
+        }
         settingowner()
     },[])
     useLayoutEffect(()=>{
@@ -56,6 +63,15 @@ const Post  =  ({post})=>{
             setPostState(activePost.state);
         }
     },[activePost])
+    const editHandler = ()=>{
+        setEdit(old=>!old);
+    }
+    const deleteHandler = async ()=>{
+        await fire.firestore().collection('posts').doc(`${post.id}`).delete();
+        setDeleted(true)
+        console.log('post deleted')
+
+    }
     const upVoteHandler =  async () => {
         const postRef = await getPost();
         const postInfo = postRef.docs[0].data();
@@ -113,7 +129,7 @@ const Post  =  ({post})=>{
         setActivePost({post:post,state:postState})
     }
     return(
-        <div  className="postContainer">
+        <div  className={`postContainer ${deleted?'deleted':''}`}>
             <div className="postInfo">
                 <div className="profilePic">
                     <span className="ownerPic">
@@ -123,7 +139,7 @@ const Post  =  ({post})=>{
                     </span>
                 </div>
                 <div className="votes">
-                    {date?Math.round(date/(1000*60)) > 60 ? Math.round(date/(1000*60*60)) > 24?Math.round(date/(1000*60*60*24))+'days ago' :Math.round(date/(1000*60*60))+'hours ago' :Math.round(date/(1000*60))+'mins ago':console.log('no date')}
+                    {date?Math.round(date/(1000*60)) > 60 ? Math.round(date/(1000*60*60)) > 24?Math.round(date/(1000*60*60*24))+'days ago' :Math.round(date/(1000*60*60))+'hours ago' :Math.round(date/(1000*60))+'mins ago':''}
                     <div className="voteContainer">
                     <FontAwesomeIcon  onClick={upVoteHandler} icon={faArrowDown} className={`upVote vote ${postState.state==='upVoted'?'active':''}`} />
                     </div>
@@ -138,6 +154,14 @@ const Post  =  ({post})=>{
                 </div>
             </div>
             <div ref={postTextref} className={`postText ${overflowing?'overflowingPost':''}`}>
+                    {
+                        authrized?<>
+                        <div className="editButton" onClick={editHandler}><div>...</div></div>
+                        <div className={`editMenu ${edit?'active':''}`}>
+                            <div onClick={deleteHandler} className="deleteButton">Delete</div>
+                        </div>
+                        </>:''
+                    }
                     {overflowing?post.text.slice(0,500)+'....':post.text}
                     {overflowing?<p onClick={postClickHandler} className="readmore">Read more..</p>:''}
                     

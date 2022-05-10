@@ -10,6 +10,7 @@ import useHasValue from "../useHasValue";
 import PopUp from "./popUp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { v4 as uuidv4 } from 'uuid';
 const MainPage=()=>{
     const popUpActive = useRecoilValue(popUpActiveAtom);
     const [texti,setText] = useState('');
@@ -27,17 +28,16 @@ const MainPage=()=>{
     }
     
     const postHandler=async()=>{
-        const oldRef = await fire.firestore().collection('posts').get();
-        const postSize = oldRef.size+1;
+        const id = uuidv4()
         const newPost = {
             owner: await JSON.parse(sessionStorage.getItem('userInfo')).id
-            ,id:postSize,
+            ,id:id,
             upvotes:[],
             downvotes:[],
             text:texti,
             timing: (Date.now()),
         }
-        await fire.firestore().collection('posts').doc(`${postSize}`).set(newPost);
+        await fire.firestore().collection('posts').doc(`${id}`).set(newPost);
         console.log('post Added')
         setText('');
     }
