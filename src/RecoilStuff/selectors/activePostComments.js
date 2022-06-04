@@ -1,19 +1,27 @@
-import { selector } from "recoil";
+import { selector ,selectorFamily,waitForAll} from "recoil";
 import { activePostAtom } from "..";
 import fire from "../../fireconfig";
+const singleCommentSelector = selectorFamily({
+    key:'singleCommentSelector',
+    get:(commentId)=>async({get})=>{
+        const ref = await fire.firestore().collection('comments').doc(`${commentId}`).get()
+        return await ref.data();
+    }
+})
 const ActivePostCommentsSelector = selector({
     key:'activePostCommentsSelector',
     get:async ({get})=>{
         const activePost = get(activePostAtom);
-        const commentarray =[]  
-        if(activePost.post?.id){
-            const commentsRef = await fire.firestore().collection('comments').where('post','==',activePost.post.id).get();
-            commentsRef.forEach(comment=>{
-            commentarray.push(comment.data());
-        })
+        if(activePost.post?.comments){
+            const commentArray = get(waitForAll(
+                activePost.post.comments.map(comment=> singleCommentSelector(comment))
+            ))
+            return commentArray
         }
-        return commentarray;
     }
-})
+});
+
+
+
 
 export default ActivePostCommentsSelector;

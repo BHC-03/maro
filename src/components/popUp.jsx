@@ -5,30 +5,22 @@ import Comment from "./comment";
 import { useRecoilState,useRecoilValue  } from "recoil";
 import { popUpActiveAtom ,activePostAtom ,actualComments,signedInfo } from "../RecoilStuff";
 import fire from "../fireconfig";
+import { v4 as uuidv4 } from 'uuid';
 const PopUp = ()=>{
     const [popUpActive , setPopUpActive] = useRecoilState(popUpActiveAtom);
     const [activePost,setActivePost] = useRecoilState(activePostAtom);
     const comments = useRecoilValue(actualComments);
     const activeUser = useRecoilValue(signedInfo);
     const postRef = createRef();
-    const [overflowing,setOverflowing] = useState(false);
     const [text,setText] = useState('')
     const [owner,setOwner] = useState();
-    let style;
     useEffect(()=>{
         if(activePost.post){
             getowner()
             
         }
     },[activePost])
-    useLayoutEffect(()=>{
-        if(postRef.current?.clientHeight > 500){
-            setOverflowing(true)
-            console.log('overflowing')
-        }else{
-            setOverflowing(false)
-        }
-    },[postRef])
+    
     
     const upVoteHandler =  async () => {
         const postRef = await fire.firestore().collection('posts').where('id','==',activePost.post.id).get();
@@ -68,8 +60,7 @@ const PopUp = ()=>{
     const postCommentHandler =async ()=>{
         if(!!text){
             const postRef = await fire.firestore().collection('posts').doc(`${activePost.post.id}`)
-            const oldCommentRef = await fire.firestore().collection('comments').get();
-            const id = oldCommentRef.size+1
+            const id = await uuidv4()
             const newComment = {
                 time: new Date().getTime(),
                 owner:activeUser.id,
@@ -81,12 +72,13 @@ const PopUp = ()=>{
             }
             await fire.firestore().collection('comments').doc(`${id}`).set(newComment)
             if(activePost.post.comments){
+                console.log([...activePost.post.comments])
                 await postRef.update({comments:[...activePost.post.comments,id]});
+                setActivePost(oldActive =>({...oldActive,post:{...oldActive.post,comments:[...oldActive.post.comments,id]}}))
             }else{
                 await postRef.update({comments:[id]});
+                setActivePost(oldActive =>({...oldActive,post:{...oldActive.post,comments:[id]}}))
             }
-            
-            setActivePost(oldActive=>({...oldActive}));
             setText('');
         }else{
             return
