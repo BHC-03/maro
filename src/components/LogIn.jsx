@@ -3,11 +3,9 @@ import useError from "../useForm";
 import fire from "../fireconfig";
 import { useSetRecoilState,useRecoilValue } from "recoil";
 import { signedInfo,isLogged } from "../RecoilStuff";
-import { useHistory } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 const CryptoJS = require("crypto-js");
 const InputSectoin = ()=>{ 
-    const history = useHistory();
     const setSignedInfo = useSetRecoilState(signedInfo);
     const IsLogged = useRecoilValue(isLogged);
     
@@ -48,15 +46,17 @@ const InputSectoin = ()=>{
         return <Redirect push to={'/mainpage/'} />
     }
     return(
-        <div className="inputContainer">
-            <input className="inputfield" type="text" value={info.email} onChange={emailHandler} />
-            {!good && errors.email && (<p className="errorMessage">{errors.email}</p>) }
-            <br/>
-            <input className="inputfield" type="password" value={info.password} onChange={passwordHandler} />
-            {!good && errors.password && (<p className="errorMessage">{errors.password}</p>) }
-            <br/>
-            <button className="button" onClick={clickHandler}>Submit</button>
+        <div className="loginMain">
+            <div className="inputContainer">
+                <input className="inputfield" type="text" value={info.email} onChange={emailHandler} />
+                {!good && errors.email && (<p className="errorMessage">{errors.email}</p>) }
+                <br/>
+                <input className="inputfield" type="password" value={info.password} onChange={passwordHandler} />
+                {!good && errors.password && (<p className="errorMessage">{errors.password}</p>) }
+                <br/>
+                <button className="button" onClick={clickHandler}>Submit</button>
 
+            </div>
         </div>
     )
 }

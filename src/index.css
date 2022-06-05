@@ -15,10 +15,11 @@ body {
   padding: 1.2rem;
   font-size: 1.3rem;
   margin: 1rem;
-  outline-color: blue;
+  border-radius:10px ;
+  outline-color: rgb(120, 228, 228);
 }
 .button {
-  margin-left: 1rem;
+  /* margin-left: 1rem; */
   padding: 1rem;
   font-size: 1rem;
   width: 18.5rem;
@@ -29,22 +30,25 @@ body {
   font-weight: bold;
 }
 .button:hover {
-  background-color: rgb(77, 77, 241);
+  background-color: rgb(148, 235, 235);
   color: white;
 }
 .inputContainer {
-  border: 3px blue solid;
+  background-color: white;
+  border: 3px rgb(97, 200, 226) solid;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   width: 350px;
+  height: 500px;
   border-radius: 10px;
   padding-bottom: 2rem;
   position: absolute;
-  left: 120px;
-  top: 120px;
-  box-shadow: 1px 1px 4px rgb(134, 128, 128);
+  left: 50%;
+  top: 50%;
+  box-shadow: 2px 2px 15px rgb(107, 104, 104);
+  transform: translate(-50%,-50%);
 }
 .inputText {
   resize: none;
@@ -491,4 +495,10 @@ body {
 }
 .postContainer.deleted{
   display: none;
+}
+.loginMain{
+  height: 100vh;
+  width: 100%;
+  /* background-color: green; */
+  background-image: linear-gradient(to bottom right,rgb(236, 161, 236) 50%  , rgb(178, 240, 240)  );
 }
