@@ -54,7 +54,7 @@ const InputSectoin = ()=>{
                 <input className="inputfield" type="password" value={info.password} onChange={passwordHandler} />
                 {!good && errors.password && (<p className="errorMessage">{errors.password}</p>) }
                 <br/>
-                <button className="button" onClick={clickHandler}>Submit</button>
+                <button className="button" onClick={clickHandler}>Sign In</button>
 
             </div>
         </div>
